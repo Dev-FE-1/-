@@ -59,5 +59,25 @@ module.exports = {
 		'no-useless-rename': 'error',
 		'object-shorthand': 'error',
 		'react/jsx-key': ['error', { checkFragmentShorthand: true }],
+		'react/react-in-jsx-scope': 'off', // React 17+에서는 필요 없앴음
+		'prettier/prettier': ['error', {
+			"printWidth": 100,
+			"tabWidth": 4,
+			"singleQuote": true,
+			"bracketSpacing": true,
+			"semi": true,
+			"useTabs": true,
+			"trailingComma": "all",
+			"quoteProps": "as-needed",
+			"jsxSingleQuote": false,
+			"arrowParens": "always",
+			"endOfLine": "lf",
+			"jsxBracketSameLine": false,
+			"requirePragma": false,
+			"insertPragma": false,
+			"proseWrap": "preserve",
+			"htmlWhitespaceSensitivity": "css"
+		}],
+		'@typescript-eslint/no-non-null-assertion': 'off', // 비활성화 - 이거 안하면 경고 뜸
 	},
 };
