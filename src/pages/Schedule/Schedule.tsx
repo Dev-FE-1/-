@@ -2,10 +2,6 @@
 import { css } from '@emotion/react';
 import { Link } from 'react-router-dom';
 
-const textStyle = css`
-	color: #750000;
-`;
-
 const Schedule = () => {
 	const schedules = [1, 2];
 	return (
@@ -14,7 +10,7 @@ const Schedule = () => {
 			<ul>
 				{schedules.map((id) => (
 					<li key={id}>
-						<Link to={`/schedule/${id}`} css={textStyle}>
+						<Link to={`${id}`} css={textStyle}>
 							Schedule Detail {id}
 						</Link>
 					</li>
@@ -25,3 +21,7 @@ const Schedule = () => {
 };
 
 export default Schedule;
+
+const textStyle = css`
+	color: #750000;
+`;

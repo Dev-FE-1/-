@@ -13,23 +13,23 @@ const Home = () => {
 			<nav>
 				<ul>
 					<li>
+						<Link to="/" css={textStyle}>
+							홈
+						</Link>
+					</li>
+					<li>
 						<Link to="/schedule" css={textStyle}>
 							개인근무일정표
 						</Link>
 					</li>
 					<li>
-						<Link to="/wage" css={textStyle}>
+						<Link to="/wage/check" css={textStyle}>
 							급여확인
 						</Link>
 					</li>
 					<li>
 						<Link to="/profile" css={textStyle}>
 							내프로필
-						</Link>
-					</li>
-					<li>
-						<Link to="/correction" css={textStyle}>
-							근무정정신청
 						</Link>
 					</li>
 				</ul>

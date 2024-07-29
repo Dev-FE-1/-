@@ -1,15 +1,17 @@
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import Home from './pages/Home';
-import Schedule from './pages/Schedule';
-import ScheduleDetail from './pages/ScheduleDetail';
-import Wage from './pages/Wage';
-import WageDetail from './pages/WageDetail';
-import Correction from './pages/Correction';
-import CorrectionDetail from './pages/CorrectionDetail';
+import Schedule from './pages/Schedule/Schedule';
+import ScheduleDetail from './pages/Schedule/ScheduleDetail';
+import Wage from './pages/Wage/Wage';
+import WageCheck from './pages/Wage/WageCheck/WageCheck';
+import WageCheckDetail from './pages/Wage/WageCheck/WageCheckDetail';
+import Correction from './pages/Wage/Correction/Correction';
+import CorrectionDetail from './pages/Wage/Correction/CorrectionDetail';
 import Profile from './pages/Profile';
 import './index.css';
+import CorrectionRequest from './pages/Wage/Correction/CorrectionRequest';
 
-const router = createBrowserRouter([
+export const router = createBrowserRouter([
 	{
 		path: '/',
 		element: <Home />,
@@ -25,17 +27,37 @@ const router = createBrowserRouter([
 	{
 		path: 'wage',
 		element: <Wage />,
+		children: [
+			{
+				path: 'check',
+				children: [
+					{
+						index: true,
+						element: <WageCheck />,
+					},
+				],
+			},
+			{
+				path: 'correction',
+				children: [
+					{
+						index: true,
+						element: <Correction />,
+					},
+				],
+			},
+		],
 	},
 	{
-		path: 'wage/:id',
-		element: <WageDetail />,
+		path: 'wage/check/:id',
+		element: <WageCheckDetail />,
 	},
 	{
-		path: 'correction',
-		element: <Correction />,
+		path: 'wage/correction/create',
+		element: <CorrectionRequest />,
 	},
 	{
-		path: 'correction/:id',
+		path: 'wage/correction/:id',
 		element: <CorrectionDetail />,
 	},
 	{
