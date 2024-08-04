@@ -2,6 +2,7 @@
 import { Global, css } from '@emotion/react';
 import 'normalize.css';
 import { colors } from '@/constants/colors';
+import { fontSize, fontWeight } from '@/constants/font';
 
 const GlobalStyles = () => (
 	<Global
@@ -33,13 +34,12 @@ const GlobalStyles = () => (
 					'Segoe UI Emoji',
 					'Segoe UI Symbol',
 					sans-serif;
-				font-weight: 400;
-				font-size: 14px;
+				font-weight: ${fontWeight.regular};
+				font-size: ${fontSize.md};
 				line-height: 1.4;
 				letter-spacing: -0.14px;
 				background-color: ${colors.white};
 				color: ${colors.black};
-				overflow: hidden;
 			}
 			#root {
 				display: flex;

@@ -73,7 +73,7 @@ module.exports = {
 				quoteProps: 'as-needed',
 				jsxSingleQuote: false,
 				arrowParens: 'always',
-				endOfLine: 'lf',
+				endOfLine: 'auto',
 				jsxBracketSameLine: false,
 				requirePragma: false,
 				insertPragma: false,

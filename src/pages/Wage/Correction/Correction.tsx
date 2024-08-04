@@ -1,4 +1,3 @@
-/** @jsxImportSource @emotion/react */
 import { Link } from 'react-router-dom';
 
 const Correction = () => {

@@ -1,6 +1,7 @@
 export const colors = {
 	primaryYellow: '#FFC700',
 	black: '#141414',
+	red: '#E50A0A',
 	darkestGray: '#333D4B',
 	gray: '#8B95A1',
 	lightGray: '#E3E5EB',
@@ -9,4 +10,6 @@ export const colors = {
 	white: '#FFFFFF',
 	afternoonPink: '#F39ACD',
 	nightGreen: '#1DC18D',
+	primaryYellowHover: '#FAB400',
+	lightestGrayHover: '#E7EAF2',
 };

@@ -1,4 +1,3 @@
-/** @jsxImportSource @emotion/react */
 import { useParams } from 'react-router-dom';
 
 const CorrectionDetail = () => {
