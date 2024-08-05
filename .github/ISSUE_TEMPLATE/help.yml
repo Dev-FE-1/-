@@ -1,6 +1,6 @@
 name: 😢 help
 description: 도움이 필요하신가요?
-title: "[Help] "
+title: "[help] "
 labels: ["😢 Help"]
 body:
   - type: textarea
