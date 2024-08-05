@@ -9,7 +9,6 @@ export interface IInputProps {
 	placeholder?: string;
 	type?: 'text' | 'password' | 'date';
 	disabled?: boolean;
-	className?: string;
 }
 
 const Input: FC<IInputProps> = ({
@@ -19,7 +18,6 @@ const Input: FC<IInputProps> = ({
 	placeholder = '',
 	type = 'text',
 	disabled = false,
-	className,
 }: IInputProps) => {
 	return (
 		<InputComponent
@@ -29,7 +27,6 @@ const Input: FC<IInputProps> = ({
 			placeholder={placeholder}
 			type={type}
 			disabled={disabled}
-			className={className}
 		/>
 	);
 };
