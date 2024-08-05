@@ -12,15 +12,19 @@ import { useEffect, useState } from 'react';
 import { Timestamp } from 'firebase/firestore';
 import { formatDateWithoutLeadingZeros } from '@/utils/dateUtils';
 
-interface IScheduleDetailProps {
-	date: string;
-	workingTimes: string[];
+interface ISchedule {
+	userId: string;
+	workDate: string;
+	wage: string;
+	workTime: string;
+	breakTime: string;
+	memos: string[];
 }
 
 const ScheduleDetail = () => {
 	const dispatch = useDispatch();
 	const { date } = useParams();
-	const [schedules, setSchedules] = useState<IScheduleDetailProps[]>([]);
+	const [schedules, setSchedules] = useState<ISchedule[]>([]);
 	const [error, setError] = useState<string | null>(null);
 
 	const formatDate = (dateString: string | undefined) => {
@@ -62,14 +66,31 @@ const ScheduleDetail = () => {
 					const filteredSchedules = personalScheduleData.filter(
 						(schedule) => schedule.date === currentdate,
 					);
-					setSchedules(filteredSchedules);
+					// Map IScheduleDetailProps to ISchedule
+					const mappedSchedules = filteredSchedules.map((schedule) => {
+						const localDate = new Date(schedule.date);
+						localDate.setMinutes(
+							localDate.getMinutes() - localDate.getTimezoneOffset(),
+						);
+						return {
+							userId: 'defaultUserId', // Replace with actual userId
+							workDate: localDate.toISOString().split('T')[0],
+							wage: 'defaultWage', // Replace with actual wage
+							workTime: schedule.workingTimes.join(', '),
+							breakTime: 'defaultBreakTime', // Replace with actual breakTime
+							memos: schedule.memos, // memos 속성으로 변경
+						};
+					});
+					setSchedules(mappedSchedules);
 				} catch (error) {
 					setError('일정을 불러오는 데 실패했습니다. 나중에 다시 시도해 주세요.');
 				}
 			}
 		};
 
-		fetchSchedules();
+		fetchSchedules().catch((error) => {
+			console.error('Failed to fetch schedules:', error);
+		});
 	}, [date]);
 
 	return (
@@ -80,10 +101,12 @@ const ScheduleDetail = () => {
 					{schedules.map((schedule, index) => (
 						<li key={index} onClick={() => dispatch(openModal('view'))}>
 							<InfoContainer>
-								<Color workingTimes={schedule.workingTimes[0]}></Color>
+								<Color workingTimes={schedule.workTime}></Color>
 								<Info>
 									<span>
-										{error ? error : workingHours(schedule.workingTimes)}
+										{error
+											? error
+											: workingHours(schedule.workTime.split(', '))}
 									</span>
 									<span>강남점</span>
 								</Info>
@@ -99,7 +122,7 @@ const ScheduleDetail = () => {
 				<span>일정 추가</span>
 			</AddBtn>
 			<div></div>
-			<ScheduleModal />
+			<ScheduleModal schedules={schedules} />
 		</Container>
 	);
 };

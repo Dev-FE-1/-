@@ -60,7 +60,9 @@ const ModalFormComponent: React.FC<IModalFormProps> = ({
 				<label>근무일</label>
 				<StyledInput
 					value={workDate}
-					disabled={isFieldDisabled('workDate') || content === 'view'}
+					disabled={
+						isFieldDisabled('workDate') || content === 'view' || content === 'add'
+					}
 					onChange={handleInputChange(setWorkDate)}
 					className={`workDate ${errors.workDate ? 'error' : ''}`}
 				/>
@@ -70,7 +72,7 @@ const ModalFormComponent: React.FC<IModalFormProps> = ({
 				<StyledInput
 					type="text"
 					value={wage}
-					disabled={isFieldDisabled('wage') || content === 'view'}
+					disabled={isFieldDisabled('wage') || content === 'view' || content === 'add'}
 					onChange={handleInputChange(setWage)}
 					className={`wage ${errors.wage ? 'error' : ''}`}
 				/>
@@ -106,7 +108,9 @@ const ModalFormComponent: React.FC<IModalFormProps> = ({
 				<StyledInput
 					type="text"
 					value={breakTime}
-					disabled={isFieldDisabled('breakTime') || content === 'view'}
+					disabled={
+						isFieldDisabled('breakTime') || content === 'view' || content === 'add'
+					}
 					onChange={handleInputChange(setBreakTime)}
 					className={`breakTime ${errors.breakTime ? 'error' : ''}`}
 				/>
