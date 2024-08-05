@@ -1,54 +1,69 @@
-import { mockdata } from '@/data/mockdata';
+import { useState, useEffect } from 'react';
+import getOfficialWage from '@/api/work/getOfficialWage';
 import { colors } from '@/constants/colors';
 import { fontSize } from '@/constants/font';
+import HomeCharacter from '/character01.svg';
 import styled from '@emotion/styled';
 
 const SummaryInfoCard = () => {
+	const [totalWorkHour, setTotalWorkHour] = useState<number | string>(0);
+	const [totalWage, setTotalWage] = useState<number | string>(0);
+
 	const today = new Date();
 	const year = today.getFullYear();
 	const month = today.getMonth() + 1;
-	const hourlyWage = 10030;
+	const monthString = month.toString().padStart(2, '0');
 
-	const currentMonthData = mockdata.filter((item) => {
-		const itemDate = new Date(item.workDate);
-		return (
-			itemDate.getFullYear() === year &&
-			itemDate.getMonth() + 1 === month &&
-			item.isOfficial === true
-		);
-	});
+	useEffect(() => {
+		const fetchWageData = async () => {
+			try {
+				const { totalWorkHour, totalWage } = await getOfficialWage(year, month);
+				setTotalWorkHour(totalWorkHour);
+				setTotalWage(totalWage);
+			} catch (error) {
+				setTotalWorkHour('급여 정보를 불러오는 데 실패했습니다');
+				setTotalWage('급여 정보를 불러오는 데 실패했습니다');
+			}
+		};
 
-	const totalTime = currentMonthData.length * 5;
-	const totalSalary = totalTime * hourlyWage;
+		fetchWageData();
+	}, [year, month]);
 
 	return (
-		<SummaryContainer>
-			<FirstSection>
-				<span>
-					공식 근무 스케줄 | {year}년 {month}월
-				</span>
-				<span>근무 시간 | {totalTime}시간</span>
-			</FirstSection>
-			<SecondSection>
-				<span>예상 급여액</span>
-				<span>{totalSalary}원</span>
-			</SecondSection>
-		</SummaryContainer>
+		<SummaryCard>
+			<SummaryCardContainer>
+				<FirstSection>
+					<span>
+						공식 근무 스케줄 | {year}년 {monthString}월
+					</span>
+					<span>근무 시간 | {totalWorkHour}시간</span>
+				</FirstSection>
+				<SecondSection>
+					<span>예상 급여액</span>
+					<span>{totalWage.toLocaleString()}원</span>
+				</SecondSection>
+			</SummaryCardContainer>
+			<img src={HomeCharacter} width="95" height="104" alt="캐릭터이미지" />
+		</SummaryCard>
 	);
 };
 
 export default SummaryInfoCard;
 
-const SummaryContainer = styled.div`
+const SummaryCard = styled.div`
 	display: flex;
-	flex-direction: column;
 	justify-content: space-between;
-	gap: 28px;
 	padding: 16px;
 	border-radius: 8px;
 	margin: 20px;
 	color: ${colors.white};
 	background-color: ${colors.primaryYellow};
+`;
+
+const SummaryCardContainer = styled.div`
+	display: flex;
+	flex-direction: column;
+	gap: 24px;
 `;
 
 const FirstSection = styled.div`

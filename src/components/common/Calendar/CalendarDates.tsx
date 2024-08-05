@@ -1,55 +1,65 @@
-import { mockdata, IMockDate } from '@/data/mockdata';
+import { FC } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Timestamp } from 'firebase/firestore';
 import { colors } from '@/constants/colors';
+import { formatDateWithLeadingZeros, isWeekend, sortByWorkType } from '@/utils/dateUtils';
+import { IScheduleProps } from '@/hooks/useSchedules';
 import CalendarBadge from '@/components/common/Calendar/CalendarBadge';
 import styled from '@emotion/styled';
-import { FC } from 'react';
 
-export interface ICalendarDatesProps {
-	date: Date;
+interface ICalendarDatesProps {
+	date: Timestamp;
 	isOfficial: boolean;
+	schedules: IScheduleProps[];
 }
 
-const CalendarDates: FC<ICalendarDatesProps> = ({ date, isOfficial }) => {
-	// 날짜별 데이터 필터링
-	const filterdDate = (date: Date, isOfficial: boolean) => {
-		return mockdata
-			.filter(
-				(item) =>
-					new Date(item.workDate).toDateString() === date.toDateString() &&
-					item.isOfficial === isOfficial,
-			)
-			.sort(sortByWorkType);
-	};
+const CalendarDates: FC<ICalendarDatesProps> = ({ date, isOfficial, schedules }) => {
+	const navigate = useNavigate();
 
-	const isWeekend = (date: Date) => {
-		const day = date.getDay();
-		return day === 0 || day === 6;
-	};
+	const formattedDate = formatDateWithLeadingZeros(date);
+	const filteredSchedules = schedules
+		.filter((schedule) => schedule.date === formattedDate)
+		.sort(sortByWorkType);
 
-	const workTypeOrder = ['open', 'middle', 'close'];
-	const sortByWorkType = (a: IMockDate, b: IMockDate) => {
-		return workTypeOrder.indexOf(a.workType) - workTypeOrder.indexOf(b.workType);
+	const handleDateClick = () => {
+		const dateString = formatDateWithLeadingZeros(date);
+		if (!isOfficial) {
+			navigate(`/schedule/${dateString}`);
+		}
 	};
 
 	return (
-		<div>
-			<DayContainer isWeekend={isWeekend(date)}>{date.getDate()}</DayContainer>
+		<DatesContainer
+			isOfficial={isOfficial}
+			onClick={() => {
+				handleDateClick();
+			}}
+		>
+			<DayContainer isWeekend={isWeekend(date)}>{date.toDate().getDate()}</DayContainer>
 			<DateListContainer>
-				{filterdDate(date, isOfficial).map(
-					(data, index) =>
-						index < 3 && (
-							<CalendarBadge
-								key={data.userId}
-								workType={data.workType as 'open' | 'middle' | 'close'}
-							/>
-						),
-				)}
+				{filteredSchedules.map((data) => (
+					<CalendarBadge
+						key={`${data.date}-${data.workingTimes}`}
+						workingTimes={data.workingTimes}
+					/>
+				))}
 			</DateListContainer>
-		</div>
+		</DatesContainer>
 	);
 };
 
 export default CalendarDates;
+
+const DatesContainer = styled.div<{ isOfficial: boolean }>`
+	${(props) =>
+		!props.isOfficial &&
+		`
+		:hover {
+			cursor: pointer;
+			background-color: ${colors.lightestGray};
+		}
+	`}
+`;
 
 const DayContainer = styled.span<{ isWeekend: boolean }>`
 	color: ${(props) => (props.isWeekend ? colors.gray : colors.black)};

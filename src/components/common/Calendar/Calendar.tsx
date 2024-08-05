@@ -1,4 +1,5 @@
 import { FC, useState } from 'react';
+import { Timestamp } from 'firebase/firestore';
 import ControlDate from '@/components/common/Calendar/ControlDate';
 import CalenderContents from '@/components/common/Calendar/CalenderContents';
 import styled from '@emotion/styled';
@@ -8,7 +9,7 @@ export interface ICalendarProps {
 }
 
 const Calendar: FC<ICalendarProps> = ({ isOfficial }) => {
-	const [nowDate, setNowDate] = useState<Date>(new Date());
+	const [nowDate, setNowDate] = useState<Timestamp>(Timestamp.now());
 
 	return (
 		<Container>

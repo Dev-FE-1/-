@@ -1,30 +1,27 @@
-import { Link } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
-import { openModal } from '@/stores/modalSlice';
-import ScheduleModal from '@/components/SheduleModal/ScheduleModal';
+import Calendar from '@/components/common/Calendar/Calendar';
+import { fontSize } from '@/constants/font';
+import styled from '@emotion/styled';
 
 const Schedule = () => {
-	const dispatch = useDispatch();
-	const schedules = [1, 2];
-
 	return (
-		<>
-			<h1>Schedule Page</h1>
-			<ul>
-				{schedules.map((id) => (
-					<li key={id}>
-						<Link to={`${id}`}>Schedule Detail {id}</Link>
-					</li>
-				))}
-			</ul>
-			<div>
-				<button onClick={() => dispatch(openModal('add'))}>일정 추가</button>
-				<button onClick={() => dispatch(openModal('view'))}>일정 조회</button>
-				<button onClick={() => dispatch(openModal('edit'))}>일정 수정</button>
-			</div>
-			<ScheduleModal />
-		</>
+		<Container>
+			<Title>개인근무 일정표</Title>
+			<Calendar isOfficial={false} />
+		</Container>
 	);
 };
 
 export default Schedule;
+
+const Container = styled.div`
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+	padding: 20px 0 60px 0;
+`;
+
+const Title = styled.span`
+	font-size: ${fontSize.xl};
+	padding: 0 20px;
+	font-weight: 600;
+`;

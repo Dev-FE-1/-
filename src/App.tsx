@@ -31,7 +31,7 @@ const router = createBrowserRouter([
 		children: [
 			{ index: true, element: <PrivateRoute element={<Home />} /> },
 			{ path: 'schedule', element: <PrivateRoute element={<Schedule />} /> },
-			{ path: 'schedule/:id', element: <PrivateRoute element={<ScheduleDetail />} /> },
+			{ path: 'schedule/:date', element: <PrivateRoute element={<ScheduleDetail />} /> },
 			{
 				path: 'wage',
 				element: <PrivateRoute element={<Wage />} />,
