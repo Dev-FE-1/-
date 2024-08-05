@@ -2,7 +2,7 @@ import { db } from '@/firebaseConfig';
 import { collection, query, where, getDocs } from 'firebase/firestore';
 import getUserId from '@/api/common/getUserId';
 
-// 근무 정정신청 내역 조회
+// 근무 정정신청 내역 조회 API
 const getCorrection = async () => {
 	const q = query(collection(db, 'WorkCorrections'), where('userId', '==', getUserId()));
 	const querySnapshot = await getDocs(q);

@@ -2,7 +2,7 @@ import { db } from '@/firebaseConfig';
 import { collection, query, where, getDocs } from 'firebase/firestore';
 import getUserId from '@/api/common/getUserId';
 
-// 공식 스케줄에 따른 특정 달의 급여 내역 및 예상 급여액 조회
+// 공식 스케줄에 따른 특정 달의 급여 내역 및 예상 급여액 조회 API
 const getOfficialWage = async (year: number, month: number) => {
 	const startOfMonth = new Date(year, month - 1, 1);
 	const endOfMonth = new Date(year, month, 0, 23, 59, 59);
@@ -20,14 +20,20 @@ const getOfficialWage = async (year: number, month: number) => {
 		const newObj = {
 			date: `${date.getUTCFullYear()}-${date.getUTCMonth() + 1}-${date.getUTCDate()}`,
 			workingTimes: obj.workingTimes,
+			isSub: obj.isSub,
 		};
 		return newObj;
 	});
 
+	// 특정 달의 공식 근무 시간과 그에 따른 예상 급여액
+	const totalWorkHour =
+		officialWageArray.reduce((acc, curr) => acc + curr.workingTimes.length, 0) * 5;
+	const totalWage = (totalWorkHour * 45135) / 5;
+
 	return {
 		officialWage: officialWageArray,
-		totalWorkHour: officialWageArray.length * 5,
-		totalWage: officialWageArray.length * 45135,
+		totalWorkHour,
+		totalWage,
 	};
 };
 

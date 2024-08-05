@@ -5,7 +5,7 @@ import getUserId from '@/api/common/getUserId';
 type TWorkingTimes = 'open' | 'middle' | 'close';
 type TType = 'cover' | 'special' | 'vacation' | 'early';
 
-// 근무 정정신청
+// 근무 정정신청 API
 const createCorrection = async (
 	workDate: string,
 	workingTimes: TWorkingTimes,
