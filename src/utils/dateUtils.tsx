@@ -1,5 +1,5 @@
 import { Timestamp } from 'firebase/firestore';
-import { IScheduleProps } from '@/hooks/useSchedules';
+import { ISchedule } from '@/pages/Schedule/ScheduleDetail';
 
 export const formatDateWithLeadingZeros = (timestamp: Timestamp) => {
 	const date = timestamp.toDate();
@@ -17,11 +17,11 @@ export const isWeekend = (timestamp: Timestamp): boolean => {
 	return day === 0 || day === 6;
 };
 
-export const sortByWorkType = (a: IScheduleProps, b: IScheduleProps) => {
+export const sortByWorkType = (a: ISchedule, b: ISchedule) => {
 	const workTypeOrder = ['open', 'middle', 'close'];
 
-	const aWorkType = a.workingTimes[0] || '';
-	const bWorkType = b.workingTimes[0] || '';
+	const aWorkType = a.workTime || '';
+	const bWorkType = b.workTime || '';
 
 	return workTypeOrder.indexOf(aWorkType) - workTypeOrder.indexOf(bWorkType);
 };

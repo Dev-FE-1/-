@@ -1,3 +1,4 @@
+import { useEffect, useState, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import { openModal } from '@/stores/modalSlice';
 import { useParams } from 'react-router-dom';
@@ -8,11 +9,10 @@ import getPersonalSchedule from '@/api/schedule/getPersonalSchedule';
 import ScheduleModal from '@/components/SheduleModal/ScheduleModal';
 import styled from '@emotion/styled';
 import IconButton from '@/components/common/Button/IconButton';
-import { useEffect, useState } from 'react';
 import { Timestamp } from 'firebase/firestore';
-import { formatDateWithoutLeadingZeros } from '@/utils/dateUtils';
+import { formatDateWithoutLeadingZeros, sortByWorkType } from '@/utils/dateUtils';
 
-interface ISchedule {
+export interface ISchedule {
 	userId: string;
 	workDate: string;
 	wage: string;
@@ -25,6 +25,7 @@ const ScheduleDetail = () => {
 	const dispatch = useDispatch();
 	const { date } = useParams();
 	const [schedules, setSchedules] = useState<ISchedule[]>([]);
+	const [selectedSchedule, setSelectedSchedule] = useState<ISchedule | null>(null);
 	const [error, setError] = useState<string | null>(null);
 
 	const formatDate = (dateString: string | undefined) => {
@@ -35,23 +36,17 @@ const ScheduleDetail = () => {
 
 	const formattedDate = formatDate(date);
 
-	const workingHours = (workingTimes: string[]) => {
-		if (workingTimes.length === 0) return '근무시간이 없습니다.';
-
-		return workingTimes
-			.map((time) => {
-				switch (time) {
-					case 'open':
-						return '오픈 (07:00~12:00)';
-					case 'middle':
-						return '미들 (12:00~17:00)';
-					case 'close':
-						return '마감 (17:00~22:00)';
-					default:
-						return '알 수 없는 근무시간';
-				}
-			})
-			.join(', ');
+	const workingHours = (workingTimes: string) => {
+		switch (workingTimes) {
+			case 'open':
+				return '오픈 (07:00~12:00)';
+			case 'middle':
+				return '미들 (12:00~17:00)';
+			case 'close':
+				return '마감 (17:00~22:00)';
+			default:
+				return '알 수 없는 근무시간';
+		}
 	};
 
 	useEffect(() => {
@@ -66,21 +61,28 @@ const ScheduleDetail = () => {
 					const filteredSchedules = personalScheduleData.filter(
 						(schedule) => schedule.date === currentdate,
 					);
+
 					// Map IScheduleDetailProps to ISchedule
-					const mappedSchedules = filteredSchedules.map((schedule) => {
-						const localDate = new Date(schedule.date);
-						localDate.setMinutes(
-							localDate.getMinutes() - localDate.getTimezoneOffset(),
-						);
-						return {
-							userId: 'defaultUserId', // Replace with actual userId
-							workDate: localDate.toISOString().split('T')[0],
-							wage: 'defaultWage', // Replace with actual wage
-							workTime: schedule.workingTimes.join(', '),
-							breakTime: 'defaultBreakTime', // Replace with actual breakTime
-							memos: schedule.memos, // memos 속성으로 변경
-						};
+					const mappedSchedules: ISchedule[] = [];
+					filteredSchedules.forEach((schedule) => {
+						schedule.workingTimes.forEach((workingTime: string, index: number) => {
+							const localDate = new Date(schedule.date);
+							localDate.setMinutes(
+								localDate.getMinutes() - localDate.getTimezoneOffset(),
+							);
+							mappedSchedules.push({
+								userId: 'defaultUserId', // Replace with actual userId
+								workDate: localDate.toISOString().split('T')[0],
+								wage: 'defaultWage', // Replace with actual wage
+								workTime: workingTime,
+								breakTime: 'defaultBreakTime', // Replace with actual breakTime
+								memos: [schedule.memos[index]], // memos 속성으로 변경
+							});
+						});
 					});
+
+					// Sort schedules by work type
+					mappedSchedules.sort(sortByWorkType);
 					setSchedules(mappedSchedules);
 				} catch (error) {
 					setError('일정을 불러오는 데 실패했습니다. 나중에 다시 시도해 주세요.');
@@ -93,21 +95,29 @@ const ScheduleDetail = () => {
 		});
 	}, [date]);
 
+	const handleScheduleClick = useCallback(
+		(schedule: ISchedule) => {
+			setSelectedSchedule(schedule);
+			dispatch(openModal('view'));
+		},
+		[dispatch],
+	);
+
 	return (
 		<Container>
 			<Title>{formattedDate}</Title>
 			{schedules.length > 0 && (
 				<ul>
 					{schedules.map((schedule, index) => (
-						<li key={index} onClick={() => dispatch(openModal('view'))}>
+						<li
+							className={'schedule-item'}
+							key={index}
+							onClick={() => handleScheduleClick(schedule)}
+						>
 							<InfoContainer>
 								<Color workingTimes={schedule.workTime}></Color>
 								<Info>
-									<span>
-										{error
-											? error
-											: workingHours(schedule.workTime.split(', '))}
-									</span>
+									<span>{error ? error : workingHours(schedule.workTime)}</span>
 									<span>강남점</span>
 								</Info>
 							</InfoContainer>
@@ -122,7 +132,7 @@ const ScheduleDetail = () => {
 				<span>일정 추가</span>
 			</AddBtn>
 			<div></div>
-			<ScheduleModal schedules={schedules} />
+			<ScheduleModal schedules={schedules} selectedSchedule={selectedSchedule} />
 		</Container>
 	);
 };
@@ -151,7 +161,7 @@ const Container = styled.div`
 	flex-direction: column;
 	gap: 20px;
 
-	li {
+	.schedule-item {
 		display: flex;
 		padding-bottom: 10px;
 		justify-content: space-between;

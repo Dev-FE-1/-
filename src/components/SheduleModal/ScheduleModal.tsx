@@ -7,6 +7,9 @@ import ModalFormComponent from '@/components/SheduleModal/ScheduleModalForm';
 import ModalFooterComponent from '@/components/SheduleModal/ScheduleModalFooter';
 import ModalContent from '@/components/common/Modal/ModalContent';
 import ModalHeaderComponent from '@/components/common/Modal/ModalHeader';
+import createPersonalSchedule from '@/api/schedule/createPersonalSchedule';
+import updatePersonalSchedule from '@/api/schedule/updatePersonalSchedule';
+import deletePersonalSchedule from '@/api/schedule/deletePersonalSchedule';
 
 interface ISchedule {
 	userId: string;
@@ -27,6 +30,8 @@ const WORK_TIME_OPTIONS = [
 const DEFAULT_WORK_TIME = WORK_TIME_OPTIONS[0];
 const DEFAULT_BREAK_TIME = '30분';
 
+type TWorkingTimes = 'open' | 'middle' | 'close';
+
 const validateFields = (fields: { [key: string]: string }) => {
 	const errors: { [key: string]: boolean } = {};
 	Object.keys(fields).forEach((key) => {
@@ -37,7 +42,10 @@ const validateFields = (fields: { [key: string]: string }) => {
 	return errors;
 };
 
-const ScheduleModal: React.FC<{ schedules: ISchedule[] }> = ({ schedules = [] }) => {
+const ScheduleModal: React.FC<{ schedules: ISchedule[]; selectedSchedule: ISchedule | null }> = ({
+	schedules = [],
+	selectedSchedule,
+}) => {
 	const dispatch = useDispatch();
 	const { isOpen, content } = useSelector((state: RootState) => state.modal);
 
@@ -86,10 +94,10 @@ const ScheduleModal: React.FC<{ schedules: ISchedule[] }> = ({ schedules = [] })
 		if (content === 'add' && schedules.length > 0) {
 			resetForm(schedules[0]);
 			setTimeout(() => setWorkTime(DEFAULT_WORK_TIME), 0);
-		} else if (schedules.length > 0) {
-			setFormValues(schedules[0]);
+		} else if (selectedSchedule) {
+			setFormValues(selectedSchedule);
 		}
-	}, [content, resetForm, setFormValues, schedules]);
+	}, [content, resetForm, setFormValues, schedules, selectedSchedule]);
 
 	const handleOverlayClick = useCallback(
 		(e: React.MouseEvent) => {
@@ -103,21 +111,75 @@ const ScheduleModal: React.FC<{ schedules: ISchedule[] }> = ({ schedules = [] })
 
 	const isFieldDisabled = useCallback((): boolean => content === 'view', [content]);
 
-	const handleSave = useCallback(() => {
+	const convertWorkTimeForFirestore = (workTime: string): TWorkingTimes => {
+		switch (workTime) {
+			case '오픈 (07:00~12:00)':
+				return 'open';
+			case '미들 (12:00~17:00)':
+				return 'middle';
+			case '마감 (17:00~22:00)':
+				return 'close';
+			default:
+				throw new Error('Invalid work time');
+		}
+	};
+
+	const handleSave = useCallback(async () => {
 		const fields = { workDate, wage, workTime, breakTime, memo };
 		const newErrors = validateFields(fields);
 		setErrors(newErrors);
 
 		if (Object.keys(newErrors).length === 0) {
-			dispatch(closeModal());
-			resetForm();
+			const workingTime: TWorkingTimes = convertWorkTimeForFirestore(workTime);
+			const success = await createPersonalSchedule(workDate, workingTime, memo);
+			if (success) {
+				dispatch(closeModal());
+				resetForm();
+			} else {
+				console.error('Failed to create personal schedule');
+			}
 		}
 	}, [workDate, wage, workTime, breakTime, memo, dispatch, resetForm]);
 
-	const handleDelete = useCallback(() => {
-		dispatch(closeModal());
-		resetForm();
-	}, [dispatch, resetForm]);
+	const handleUpdate = useCallback(async () => {
+		const fields = { workDate, wage, workTime, breakTime, memo };
+		const newErrors = validateFields(fields);
+		setErrors(newErrors);
+
+		if (Object.keys(newErrors).length === 0) {
+			const workingTime: TWorkingTimes = convertWorkTimeForFirestore(workTime);
+			const oldWorkingTime: TWorkingTimes = schedules[0].workTime as TWorkingTimes; // Assuming the first schedule is being edited
+			const success = await updatePersonalSchedule(
+				workDate,
+				oldWorkingTime,
+				workingTime,
+				memo,
+			);
+			if (success) {
+				dispatch(closeModal());
+				resetForm();
+			} else {
+				console.error('Failed to update personal schedule');
+			}
+		}
+	}, [workDate, wage, workTime, breakTime, memo, schedules, dispatch, resetForm]);
+
+	const handleDelete = useCallback(async () => {
+		const fields = { workDate, workTime };
+		const newErrors = validateFields(fields);
+		setErrors(newErrors);
+
+		if (Object.keys(newErrors).length === 0) {
+			const workingTime: TWorkingTimes = convertWorkTimeForFirestore(workTime);
+			const success = await deletePersonalSchedule(workDate, workingTime);
+			if (success) {
+				dispatch(closeModal());
+				resetForm();
+			} else {
+				console.error('Failed to delete personal schedule');
+			}
+		}
+	}, [workDate, workTime, dispatch, resetForm]);
 
 	const handleEdit = useCallback(() => {
 		dispatch(openModal('edit'));
@@ -161,7 +223,7 @@ const ScheduleModal: React.FC<{ schedules: ISchedule[] }> = ({ schedules = [] })
 					content={content}
 					handleDelete={handleDelete}
 					handleEdit={handleEdit}
-					handleSave={handleSave}
+					handleSave={content === 'edit' ? handleUpdate : handleSave}
 					closeModal={() => {
 						dispatch(closeModal());
 					}}
