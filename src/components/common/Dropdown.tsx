@@ -1,6 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import styled from '@emotion/styled';
 import { colors } from '@/constants/colors';
+import { ChevronDown } from 'lucide-react';
 
 interface IDropdownProps {
 	options: { value: string; label: string; color?: string }[];
@@ -42,6 +43,7 @@ const Dropdown: React.FC<IDropdownProps> = ({
 			<DropdownButton onClick={handleToggle} disabled={disabled} className={className}>
 				{selectedOptionData?.color && <ColorCircle color={selectedOptionData.color} />}
 				{selectedOptionData?.label || '선택'}
+				<ChevronDown style={{ marginLeft: 'auto', strokeWidth: 1.2 }} />
 			</DropdownButton>
 			{isOpen && (
 				<DropdownMenu>
@@ -79,10 +81,6 @@ const DropdownButton = styled.button<{ disabled?: boolean }>`
 	height: 44px;
 	display: flex;
 	align-items: center;
-	&:after {
-		content: '▼';
-		margin-left: auto;
-	}
 	&.error {
 		border: 1px solid ${colors.red};
 	}
@@ -107,6 +105,7 @@ const DropdownItem = styled.li`
 	cursor: pointer;
 	display: flex;
 	align-items: center;
+	justify-content: flex-start;
 	&:hover {
 		background-color: ${colors.lightGray};
 	}

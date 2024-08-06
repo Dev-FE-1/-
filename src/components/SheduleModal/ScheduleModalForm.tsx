@@ -51,7 +51,6 @@ const ModalFormComponent: React.FC<IModalFormProps> = ({
 		} else if (workTime === 'close') {
 			setWorkTime('마감 (17:00~22:00)');
 		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [workTime]);
 
 	return (
@@ -60,9 +59,7 @@ const ModalFormComponent: React.FC<IModalFormProps> = ({
 				<label>근무일</label>
 				<StyledInput
 					value={workDate}
-					disabled={
-						isFieldDisabled('workDate') || content === 'view' || content === 'add'
-					}
+					disabled={true}
 					onChange={handleInputChange(setWorkDate)}
 					className={`workDate ${errors.workDate ? 'error' : ''}`}
 				/>
@@ -72,7 +69,7 @@ const ModalFormComponent: React.FC<IModalFormProps> = ({
 				<StyledInput
 					type="text"
 					value={wage}
-					disabled={isFieldDisabled('wage') || content === 'view' || content === 'add'}
+					disabled={true}
 					onChange={handleInputChange(setWage)}
 					className={`wage ${errors.wage ? 'error' : ''}`}
 				/>
@@ -108,9 +105,7 @@ const ModalFormComponent: React.FC<IModalFormProps> = ({
 				<StyledInput
 					type="text"
 					value={breakTime}
-					disabled={
-						isFieldDisabled('breakTime') || content === 'view' || content === 'add'
-					}
+					disabled={true}
 					onChange={handleInputChange(setBreakTime)}
 					className={`breakTime ${errors.breakTime ? 'error' : ''}`}
 				/>
