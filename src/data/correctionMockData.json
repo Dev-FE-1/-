@@ -1,0 +1,164 @@
+{
+	"workCorrections": [
+		{
+			"approveStatus": "approved",
+			"description": "Routine cover for vacation",
+			"reqDate": "2024-7-1",
+			"type": "cover",
+			"workDate": "2024-7-2",
+			"workingTimes": "open"
+		},
+		{
+			"approveStatus": "rejected",
+			"description": "Emergency cover needed",
+			"reqDate": "2024-7-3",
+			"type": "cover",
+			"workDate": "2024-7-4",
+			"workingTimes": "middle"
+		},
+		{
+			"approveStatus": "pending",
+			"description": "Special project work",
+			"reqDate": "2024-7-5",
+			"type": "special",
+			"workDate": "2024-7-6",
+			"workingTimes": "close"
+		},
+		{
+			"approveStatus": "approved",
+			"description": "Vacation leave scheduled",
+			"reqDate": "2024-7-7",
+			"type": "vacation",
+			"workDate": "2024-7-8",
+			"workingTimes": "open"
+		},
+		{
+			"approveStatus": "rejected",
+			"description": "Early leave for medical appointment",
+			"reqDate": "2024-7-9",
+			"type": "early",
+			"workDate": "2024-7-10",
+			"workingTimes": "middle"
+		},
+		{
+			"approveStatus": "approved",
+			"description": "Vacation leave",
+			"reqDate": "2024-7-11",
+			"type": "vacation",
+			"workDate": "2024-7-12",
+			"workingTimes": "close"
+		},
+		{
+			"approveStatus": "pending",
+			"description": "Cover for sick leave",
+			"reqDate": "2024-7-13",
+			"type": "cover",
+			"workDate": "2024-7-14",
+			"workingTimes": "open"
+		},
+		{
+			"approveStatus": "rejected",
+			"description": "Special event participation",
+			"reqDate": "2024-7-15",
+			"type": "special",
+			"workDate": "2024-7-16",
+			"workingTimes": "middle"
+		},
+		{
+			"approveStatus": "approved",
+			"description": "Special training session",
+			"reqDate": "2024-7-17",
+			"type": "special",
+			"workDate": "2024-7-18",
+			"workingTimes": "close"
+		},
+		{
+			"approveStatus": "rejected",
+			"description": "Early dismissal requested",
+			"reqDate": "2024-7-19",
+			"type": "early",
+			"workDate": "2024-7-20",
+			"workingTimes": "open"
+		},
+		{
+			"approveStatus": "pending",
+			"description": "Cover for conference",
+			"reqDate": "2024-7-21",
+			"type": "cover",
+			"workDate": "2024-7-22",
+			"workingTimes": "middle"
+		},
+		{
+			"approveStatus": "approved",
+			"description": "Vacation leave approved",
+			"reqDate": "2024-7-23",
+			"type": "vacation",
+			"workDate": "2024-7-24",
+			"workingTimes": "close"
+		},
+		{
+			"approveStatus": "rejected",
+			"description": "Unexpected early leave",
+			"reqDate": "2024-7-25",
+			"type": "early",
+			"workDate": "2024-7-26",
+			"workingTimes": "open"
+		},
+		{
+			"approveStatus": "approved",
+			"description": "Training day",
+			"reqDate": "2024-7-27",
+			"type": "special",
+			"workDate": "2024-7-28",
+			"workingTimes": "middle"
+		},
+		{
+			"approveStatus": "pending",
+			"description": "Requested vacation day",
+			"reqDate": "2024-7-29",
+			"type": "vacation",
+			"workDate": "2024-7-30",
+			"workingTimes": "close"
+		},
+		{
+			"approveStatus": "rejected",
+			"description": "Special duty on project",
+			"reqDate": "2024-7-31",
+			"type": "special",
+			"workDate": "2024-8-1",
+			"workingTimes": "open"
+		},
+		{
+			"approveStatus": "approved",
+			"description": "Early leave for personal reasons",
+			"reqDate": "2024-8-2",
+			"type": "early",
+			"workDate": "2024-8-3",
+			"workingTimes": "middle"
+		},
+		{
+			"approveStatus": "pending",
+			"description": "Vacation leave request",
+			"reqDate": "2024-8-4",
+			"type": "vacation",
+			"workDate": "2024-8-5",
+			"workingTimes": "close"
+		},
+		{
+			"approveStatus": "approved",
+			"description": "Cover required for absent colleague",
+			"reqDate": "2024-8-6",
+			"type": "cover",
+			"workDate": "2024-8-7",
+			"workingTimes": "open"
+		},
+		{
+			"approveStatus": "rejected",
+			"description": "Special work on a holiday",
+			"reqDate": "2024-8-8",
+			"type": "special",
+			"workDate": "2024-8-9",
+			"workingTimes": "middle"
+		}
+	]
+}

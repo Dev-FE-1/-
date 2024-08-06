@@ -14,6 +14,7 @@ import GlobalStyles from '@/styles/GlobalStyles';
 import Layout from '@/layout/Layout';
 import Login from '@/pages/Login';
 import UnderConstruction from './pages/UnderConstruction';
+import { NotFoundPage } from './components/NotFound';
 
 export interface IPrivateRouteProps {
 	element: JSX.Element;
@@ -57,6 +58,7 @@ const router = createBrowserRouter([
 			{ path: 'settings', element: <UnderConstruction /> },
 		],
 	},
+	{ path: '*', element: <NotFoundPage /> },
 ]);
 
 const App = () => (

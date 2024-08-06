@@ -3,7 +3,11 @@ import { collection, query, where, getDocs } from 'firebase/firestore';
 import getUserId from '@/api/common/getUserId';
 
 // 회원 정보 조회 API
-const getUserInfo = async () => {
+const getUserInfo = async (): Promise<{
+	name: string;
+	workPlace: string;
+	workingSets: { times: []; weeks: [] };
+}> => {
 	const q = query(collection(db, 'User'), where('userId', '==', getUserId()));
 	const querySnapshot = await getDocs(q);
 	const docData = querySnapshot.docs.map((doc) => doc.data());
@@ -16,9 +20,7 @@ const getUserInfo = async () => {
 		return newObj;
 	});
 
-	return {
-		userInfo: userInfoData[0],
-	};
+	return userInfoData[0];
 };
 
 export default getUserInfo;
