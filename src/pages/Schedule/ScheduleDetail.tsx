@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { openModal } from '@/stores/modalSlice';
 import { useParams } from 'react-router-dom';
 import { fontSize, fontWeight } from '@/constants/font';
@@ -11,6 +11,7 @@ import styled from '@emotion/styled';
 import IconButton from '@/components/common/Button/IconButton';
 import { Timestamp } from 'firebase/firestore';
 import { formatDateWithoutLeadingZeros, sortByWorkType } from '@/utils/dateUtils';
+import { RootState } from '@/stores/store';
 
 export interface ISchedule {
 	userId: string;
@@ -19,6 +20,7 @@ export interface ISchedule {
 	workTime: string;
 	breakTime: string;
 	memos: string[];
+	isSub?: boolean;
 }
 
 const ScheduleDetail = () => {
@@ -27,6 +29,7 @@ const ScheduleDetail = () => {
 	const [schedules, setSchedules] = useState<ISchedule[]>([]);
 	const [selectedSchedule, setSelectedSchedule] = useState<ISchedule | null>(null);
 	const [error, setError] = useState<string | null>(null);
+	const { status } = useSelector((state: RootState) => state.schedules);
 
 	const formatDate = (dateString: string | undefined) => {
 		if (!dateString) return '';
@@ -62,7 +65,6 @@ const ScheduleDetail = () => {
 						(schedule) => schedule.date === currentdate,
 					);
 
-					// Map IScheduleDetailProps to ISchedule
 					const mappedSchedules: ISchedule[] = [];
 					filteredSchedules.forEach((schedule) => {
 						schedule.workingTimes.forEach((workingTime: string, index: number) => {
@@ -71,12 +73,12 @@ const ScheduleDetail = () => {
 								localDate.getMinutes() - localDate.getTimezoneOffset(),
 							);
 							mappedSchedules.push({
-								userId: 'defaultUserId', // Replace with actual userId
+								userId: 'defaultUserId',
 								workDate: localDate.toISOString().split('T')[0],
-								wage: 'defaultWage', // Replace with actual wage
+								wage: 'defaultWage',
 								workTime: workingTime,
-								breakTime: 'defaultBreakTime', // Replace with actual breakTime
-								memos: [schedule.memos[index]], // memos 속성으로 변경
+								breakTime: 'defaultBreakTime',
+								memos: [schedule.memos[index]],
 							});
 						});
 					});
@@ -92,7 +94,7 @@ const ScheduleDetail = () => {
 		fetchSchedules().catch((error) => {
 			console.error('Failed to fetch schedules:', error);
 		});
-	}, [date]);
+	}, [date, dispatch, status]);
 
 	const handleScheduleClick = useCallback(
 		(schedule: ISchedule) => {
@@ -187,7 +189,7 @@ const Color = styled.span<{ workingTimes: string }>`
 			case 'close':
 				return colors.nightGreen;
 			default:
-				return colors.lightGray; // 기본 색상 추가
+				return colors.lightGray;
 		}
 	}};
 	margin-top: 4px;

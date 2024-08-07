@@ -10,6 +10,8 @@ import ModalHeaderComponent from '@/components/common/Modal/ModalHeader';
 import createPersonalSchedule from '@/api/schedule/createPersonalSchedule';
 import updatePersonalSchedule from '@/api/schedule/updatePersonalSchedule';
 import deletePersonalSchedule from '@/api/schedule/deletePersonalSchedule';
+import { fetchSchedules } from '@/stores/scheduleSlice';
+import { AppDispatch } from '@/stores/store';
 
 interface ISchedule {
 	userId: string;
@@ -46,9 +48,8 @@ const ScheduleModal: React.FC<{ schedules: ISchedule[]; selectedSchedule: ISched
 	schedules = [],
 	selectedSchedule,
 }) => {
-	const dispatch = useDispatch();
+	const dispatch = useDispatch<AppDispatch>();
 	const { isOpen, content } = useSelector((state: RootState) => state.modal);
-
 	const today = useMemo(() => new Date().toISOString().split('T')[0], []);
 	const defaultMemo = useMemo(
 		() => (schedules.length > 0 && schedules[0].memos.length > 0 ? schedules[0].memos[0] : ''),
@@ -86,18 +87,32 @@ const ScheduleModal: React.FC<{ schedules: ISchedule[]; selectedSchedule: ISched
 		setWage(DEFAULT_WAGE);
 		setWorkTime(schedule.workTime);
 		setBreakTime(DEFAULT_BREAK_TIME);
-		setMemo(schedule.memos[0]); // 기존 스케줄의 메모 사용
+		setMemo(schedule.memos[0]);
 		setErrors({});
 	}, []);
 
 	useEffect(() => {
-		if (content === 'add' && schedules.length > 0) {
-			resetForm(schedules[0]);
-			setTimeout(() => setWorkTime(DEFAULT_WORK_TIME), 0);
-		} else if (selectedSchedule) {
-			setFormValues(selectedSchedule);
+		if (!isOpen || content === 'add' || content === 'edit') {
+			dispatch(
+				fetchSchedules({
+					year: new Date().getFullYear(),
+					month: new Date().getMonth() + 1,
+					isOfficial: false,
+				}),
+			);
 		}
-	}, [content, resetForm, setFormValues, schedules, selectedSchedule]);
+	}, [isOpen, content, dispatch]);
+
+	useEffect(() => {
+		if (isOpen) {
+			if (content === 'add' && schedules.length > 0) {
+				resetForm(schedules[0]);
+				setTimeout(() => setWorkTime(DEFAULT_WORK_TIME), 0);
+			} else if (selectedSchedule) {
+				setFormValues(selectedSchedule);
+			}
+		}
+	}, [isOpen, content, selectedSchedule, resetForm, setFormValues, schedules]);
 
 	const handleOverlayClick = useCallback(
 		(e: React.MouseEvent) => {
@@ -133,6 +148,13 @@ const ScheduleModal: React.FC<{ schedules: ISchedule[]; selectedSchedule: ISched
 			const workingTime: TWorkingTimes = convertWorkTimeForFirestore(workTime);
 			const success = await createPersonalSchedule(workDate, workingTime, memo);
 			if (success) {
+				dispatch(
+					fetchSchedules({
+						year: new Date(workDate).getFullYear(),
+						month: new Date(workDate).getMonth() + 1,
+						isOfficial: false,
+					}),
+				);
 				dispatch(closeModal());
 				resetForm();
 			} else {
@@ -148,7 +170,7 @@ const ScheduleModal: React.FC<{ schedules: ISchedule[]; selectedSchedule: ISched
 
 		if (Object.keys(newErrors).length === 0) {
 			const workingTime: TWorkingTimes = convertWorkTimeForFirestore(workTime);
-			const oldWorkingTime: TWorkingTimes = schedules[0].workTime as TWorkingTimes; // Assuming the first schedule is being edited
+			const oldWorkingTime: TWorkingTimes = schedules[0].workTime as TWorkingTimes;
 			const success = await updatePersonalSchedule(
 				workDate,
 				oldWorkingTime,
@@ -156,6 +178,13 @@ const ScheduleModal: React.FC<{ schedules: ISchedule[]; selectedSchedule: ISched
 				memo,
 			);
 			if (success) {
+				dispatch(
+					fetchSchedules({
+						year: new Date(workDate).getFullYear(),
+						month: new Date(workDate).getMonth() + 1,
+						isOfficial: false,
+					}),
+				);
 				dispatch(closeModal());
 				resetForm();
 			} else {
@@ -173,6 +202,13 @@ const ScheduleModal: React.FC<{ schedules: ISchedule[]; selectedSchedule: ISched
 			const workingTime: TWorkingTimes = convertWorkTimeForFirestore(workTime);
 			const success = await deletePersonalSchedule(workDate, workingTime);
 			if (success) {
+				dispatch(
+					fetchSchedules({
+						year: new Date(workDate).getFullYear(),
+						month: new Date(workDate).getMonth() + 1,
+						isOfficial: false,
+					}),
+				);
 				dispatch(closeModal());
 				resetForm();
 			} else {
